@@ -3,221 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão GF - Cartões de Crédito</title>
+    <title>Gestão GF | Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --bg: #f9fafb;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-            --border: #e5e7eb;
+            --primary: #6366f1;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --sidebar: #ffffff;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --accent: #10b981;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid #e2e8f0; padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary); margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; }
+        nav { flex: 1; }
+        nav ul { list-style: none; }
+        nav li { padding: 12px 16px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--text-sub); transition: 0.3s; font-weight: 500; }
+        nav li:hover { background: #f1f5f9; color: var(--primary); }
+        nav li.active { background: var(--primary); color: white; }
+
+        /* Main Content */
+        main { flex: 1; margin-left: 260px; padding: 2rem; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h1 { font-weight: 600; font-size: 1.5rem; color: var(--primary); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid #e2e8f0; }
+        .stat-card span { font-size: 0.875rem; color: var(--text-sub); }
+        .stat-card h2 { font-size: 1.5rem; margin-top: 0.5rem; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .glass-card { background: var(--card); padding: 1.5rem; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+
+        /* Estilo dos Cartões Físicos */
+        .cc-visual { background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1rem; position: relative; overflow: hidden; }
+        .cc-visual::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+
+        /* Formulários */
+        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
         
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; }
-        button { cursor: pointer; border: none; font-weight: 600; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-
-        .card-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .chart-container { height: 300px; margin-top: 20px; }
-
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab.active { border-color: var(--primary); font-weight: 600; }
-
         .hidden { display: none; }
+        .btn-backup { background: #f1f5f9; color: var(--text-main); width: auto; padding: 8px 16px; font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            aside { width: 70px; padding: 1rem; }
+            aside span { display: none; }
+            main { margin-left: 70px; }
+            .stats-grid, .content-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Gestão GF | Cartões</h1>
-        <div>
-            <button onclick="exportarDados()" class="btn-outline" style="width: auto; padding: 5px 15px;">Backup</button>
-            <input type="file" id="importFile" style="display:none" onchange="importarDados(event)">
-            <button onclick="document.getElementById('importFile').click()" class="btn-outline" style="width: auto; padding: 5px 15px;">Importar</button>
-        </div>
-    </header>
+<aside>
+    <div class="logo">🏗️ <span>Gestão GF</span></div>
+    <nav>
+        <ul>
+            <li class="active" onclick="showSection('overview', this)">📊 <span>Geral</span></li>
+            <li onclick="showSection('cartoes', this)">💳 <span>Cartões</span></li>
+            <li onclick="showSection('compras', this)">🛍️ <span>Compras</span></li>
+        </ul>
+    </nav>
+    <button class="btn-backup" onclick="exportarDados()">💾 Backup</button>
+</aside>
 
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('dash')">Dashboard</div>
-        <div class="tab" onclick="switchTab('cartoes')">Cartões</div>
-        <div class="tab" onclick="switchTab('compras')">Lançamentos</div>
+<main>
+    <div class="header-top">
+        <h1>Dashboard Financeiro</h1>
+        <div id="current-date" style="color: var(--text-sub)"></div>
     </div>
 
-    <div id="tab-dash">
-        <div class="grid">
-            <div class="card">
-                <h3>Gastos por Categoria</h3>
-                <div class="chart-container"><canvas id="catChart"></canvas></div>
+    <section id="sec-overview">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>Gasto Total (Mês)</span>
+                <h2 id="total-mes">R$ 0,00</h2>
             </div>
-            <div class="card">
-                <h3>Projeção Mensal (6 meses)</h3>
-                <div class="chart-container"><canvas id="monthChart"></canvas></div>
+            <div class="stat-card">
+                <span>Limite Livre Total</span>
+                <h2 id="limite-livre" style="color: var(--accent)">R$ 0,00</h2>
+            </div>
+            <div class="stat-card">
+                <span>Próxima Fatura</span>
+                <h2 id="proxima-fatura">R$ 0,00</h2>
             </div>
         </div>
-    </div>
 
-    <div id="tab-cartoes" class="hidden">
-        <div class="grid">
-            <div class="card">
-                <h3>Novo Cartão</h3>
-                <input type="text" id="cardNome" placeholder="Nome do Cartão (ex: Nubank)">
-                <input type="number" id="cardLimite" placeholder="Limite Total (R$)">
-                <input type="number" id="cardVencimento" placeholder="Dia do Vencimento">
-                <input type="number" id="cardMelhorDia" placeholder="Melhor dia para compra">
-                <button onclick="salvarCartao()" class="btn-primary">Salvar Cartão</button>
+        <div class="content-grid">
+            <div class="glass-card">
+                <h3>Projeção de Gastos</h3>
+                <div style="height: 300px;"><canvas id="projChart"></canvas></div>
             </div>
-            <div class="card">
+            <div class="glass-card">
                 <h3>Meus Cartões</h3>
-                <div id="listaCartoes"></div>
+                <div id="deck-cartoes"></div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="tab-compras" class="hidden">
-        <div class="card" style="max-width: 500px; margin: 0 auto;">
-            <h3>Lançar Compra</h3>
-            <select id="compraCartao"></select>
-            <input type="text" id="compraDesc" placeholder="Descrição">
-            <input type="number" id="compraValor" placeholder="Valor Total (R$)">
-            <input type="date" id="compraData">
-            <select id="compraCat">
-                <option value="Alimentação">Alimentação</option>
-                <option value="Lazer">Lazer</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Saúde">Saúde</option>
-                <option value="Outros">Outros</option>
-            </select>
-            <input type="number" id="compraParcelas" placeholder="Parcelas (1 = à vista)">
-            <button onclick="salvarCompra()" class="btn-primary">Lançar</button>
+    <section id="sec-cartoes" class="hidden">
+        <div class="content-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="glass-card">
+                <h3>Novo Cartão</h3>
+                <input type="text" id="c-nome" placeholder="Apelido do Cartão">
+                <input type="number" id="c-limite" placeholder="Limite Total">
+                <input type="number" id="c-venc" placeholder="Dia do Vencimento">
+                <input type="number" id="c-melhor" placeholder="Melhor Dia de Compra">
+                <button onclick="addCard()">Cadastrar Cartão</button>
+            </div>
+            <div class="glass-card">
+                <h3>Dica do Engenheiro</h3>
+                <p style="color: var(--text-sub); font-size: 0.9rem;">Cadastre seus cartões com o limite real. O sistema calculará o comprometimento baseado nas parcelas futuras.</p>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+
+    <section id="sec-compras" class="hidden">
+        <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+            <h3>Lançar Nova Despesa</h3>
+            <select id="l-cartao"></select>
+            <input type="text" id="l-desc" placeholder="O que você comprou?">
+            <input type="number" id="l-valor" placeholder="Valor Total">
+            <input type="date" id="l-data">
+            <input type="number" id="l-parc" placeholder="Quantidade de parcelas (1 para à vista)">
+            <select id="l-cat">
+                <option>Alimentação</option>
+                <option>Assinaturas</option>
+                <option>Lazer</option>
+                <option>Saúde</option>
+                <option>Transporte</option>
+                <option>Outros</option>
+            </select>
+            <button onclick="addCompra()">Confirmar Lançamento</button>
+        </div>
+    </section>
+</main>
 
 <script>
-    let dados = JSON.parse(localStorage.getItem('gestaoGF_dados')) || { cartoes: [], compras: [] };
-    let catChart, monthChart;
+    let db = JSON.parse(localStorage.getItem('gf_premium_db')) || { cartoes: [], compras: [] };
+    let chartObj = null;
 
-    function salvarDados() {
-        localStorage.setItem('gestaoGF_dados', JSON.stringify(dados));
-        renderizarTudo();
+    function save() {
+        localStorage.setItem('gf_premium_db', JSON.stringify(db));
+        updateUI();
     }
 
-    function switchTab(tab) {
-        document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
-        document.getElementById('tab-' + tab).classList.remove('hidden');
-        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
-        if(tab === 'dash') renderCharts();
+    function showSection(id, el) {
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('sec-' + id).classList.remove('hidden');
+        document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
+        el.classList.add('active');
+        if(id === 'overview') initChart();
     }
 
-    function salvarCartao() {
-        const novo = {
+    function addCard() {
+        const c = {
             id: Date.now(),
-            nome: document.getElementById('cardNome').value,
-            limite: parseFloat(document.getElementById('cardLimite').value),
-            vencimento: document.getElementById('cardVencimento').value,
-            melhorDia: document.getElementById('cardMelhorDia').value
+            nome: document.getElementById('c-nome').value,
+            limite: parseFloat(document.getElementById('c-limite').value),
+            venc: document.getElementById('c-venc').value,
+            melhor: document.getElementById('c-melhor').value
         };
-        dados.cartoes.push(novo);
-        salvarDados();
+        db.cartoes.push(c);
+        save();
+        alert('Cartão adicionado!');
     }
 
-    function salvarCompra() {
-        const valor = parseFloat(document.getElementById('compraValor').value);
-        const parcelas = parseInt(document.getElementById('compraParcelas').value) || 1;
-        const nova = {
+    function addCompra() {
+        const valor = parseFloat(document.getElementById('l-valor').value);
+        const parc = parseInt(document.getElementById('l-parc').value) || 1;
+        const comp = {
             id: Date.now(),
-            cartaoId: document.getElementById('compraCartao').value,
-            desc: document.getElementById('compraDesc').value,
-            valorTotal: valor,
-            valorParcela: valor / parcelas,
-            data: document.getElementById('compraData').value,
-            categoria: document.getElementById('compraCat').value,
-            parcelas: parcelas
+            cartao: document.getElementById('l-cartao').value,
+            desc: document.getElementById('l-desc').value,
+            valor: valor,
+            parcelas: parc,
+            vParcela: valor / parc,
+            data: document.getElementById('l-data').value,
+            cat: document.getElementById('l-cat').value
         };
-        dados.compras.push(nova);
-        salvarDados();
+        db.compras.push(comp);
+        save();
+        alert('Lançamento realizado!');
     }
 
-    function renderizarTudo() {
-        const lista = document.getElementById('listaCartoes');
-        const select = document.getElementById('compraCartao');
-        lista.innerHTML = '';
-        select.innerHTML = '';
+    function updateUI() {
+        // Atualizar Select de Cartões
+        const sel = document.getElementById('l-cartao');
+        sel.innerHTML = db.cartoes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
 
-        dados.cartoes.forEach(c => {
-            lista.innerHTML += `<div class="card-item"><span>${c.nome}</span> <b>R$ ${c.limite.toFixed(2)}</b></div>`;
-            select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
-        });
-        renderCharts();
+        // Atualizar Deck de Cartões Visual
+        const deck = document.getElementById('deck-cartoes');
+        deck.innerHTML = db.cartoes.map(c => `
+            <div class="cc-visual">
+                <div style="font-size: 0.8rem; opacity: 0.8">Cartão</div>
+                <div style="font-size: 1.2rem; font-weight: 700">${c.nome}</div>
+                <div style="margin-top: 15px; font-size: 0.9rem">Limite: R$ ${c.limite.toFixed(2)}</div>
+            </div>
+        `).join('');
+
+        // Resumos rápidos
+        const totalGasto = db.compras.reduce((a, b) => a + b.valor, 0);
+        document.getElementById('total-mes').innerText = `R$ ${totalGasto.toLocaleString('pt-br')}`;
+        
+        const totalLimite = db.cartoes.reduce((a, b) => a + b.limite, 0);
+        document.getElementById('limite-livre').innerText = `R$ ${(totalLimite - totalGasto).toLocaleString('pt-br')}`;
+
+        initChart();
     }
 
-    function renderCharts() {
-        const ctxCat = document.getElementById('catChart').getContext('2d');
-        const ctxMonth = document.getElementById('monthChart').getContext('2d');
+    function initChart() {
+        const ctx = document.getElementById('projChart').getContext('2d');
+        if(chartObj) chartObj.destroy();
 
-        if(catChart) catChart.destroy();
-        if(monthChart) monthChart.destroy();
-
-        // Lógica simples de agrupamento para o gráfico
-        const cats = {};
-        dados.compras.forEach(c => cats[c.categoria] = (cats[c.categoria] || 0) + c.valorTotal);
-
-        catChart = new Chart(ctxCat, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(cats),
-                datasets: [{ data: Object.values(cats), backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#6366f1'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-
-        // Mock de projeção (Exemplo simples)
-        monthChart = new Chart(ctxMonth, {
-            type: 'bar',
+        // Dados fictícios para o exemplo inicial, mas que já usam a estrutura real
+        chartObj = new Chart(ctx, {
+            type: 'line',
             data: {
                 labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                datasets: [{ label: 'Gastos R$', data: [1200, 1900, 1500, 2100, 1800, 2400], backgroundColor: '#4f46e5' }]
+                datasets: [{
+                    label: 'Projeção de Faturas',
+                    data: [1200, 1500, 800, 1900, 2200, 1100],
+                    borderColor: '#6366f1',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
     }
 
     function exportarDados() {
-        const blob = new Blob([JSON.stringify(dados)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
+        const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
         const a = document.createElement('a');
-        a.href = url;
-        a.download = 'backup_gestao_gf.json';
+        a.href = URL.createObjectURL(blob);
+        a.download = 'gestao_gf_backup.json';
         a.click();
     }
 
-    function importarDados(event) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            dados = JSON.parse(e.target.result);
-            salvarDados();
-        };
-        reader.readAsText(event.target.files[0]);
-    }
-
-    window.onload = renderizarTudo;
+    document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-br', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    window.onload = updateUI;
 </script>
+
 </body>
 </html>
