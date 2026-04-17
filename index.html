@@ -3,257 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão GF | Premium</title>
+    <title>Cartão de Crédito Fácil | Pro</title>
+
+    <meta name="theme-color" content="#6366f1">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3037/3037156.png">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #6366f1;
-            --secondary: #64748b;
             --bg: #f8fafc;
             --sidebar: #ffffff;
             --card: #ffffff;
             --text-main: #0f172a;
             --text-sub: #64748b;
             --accent: #10b981;
+            --danger: #f43f5e;
+            --border: #f1f5f9;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; }
+        body { background-color: #f8fafc; color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* Banner de Instalação Customizado */
+        #pwa-install-banner {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white; padding: 15px 25px;
+            border-radius: 20px; display: none; align-items: center; gap: 15px;
+            z-index: 9999; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp { from { bottom: -100px; } to { bottom: 20px; } }
 
         /* Sidebar */
-        aside { width: 260px; background: var(--sidebar); border-right: 1px solid #e2e8f0; padding: 2rem; display: flex; flex-direction: column; position: fixed; height: 100vh; }
-        .logo { font-weight: 800; font-size: 1.25rem; color: var(--primary); margin-bottom: 2rem; display: flex; align-items: center; gap: 10px; }
+        aside { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2.5rem 1.5rem; display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; box-shadow: 4px 0 24px rgba(0,0,0,0.02); }
+        .logo-area { margin-bottom: 3rem; }
+        .logo { font-weight: 800; font-size: 1.4rem; line-height: 1.1; background: linear-gradient(135deg, var(--primary), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; letter-spacing: -0.5px; }
+        .subtitle { font-size: 0.7rem; color: var(--text-sub); font-weight: 500; margin-top: 8px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+
         nav { flex: 1; }
         nav ul { list-style: none; }
-        nav li { padding: 12px 16px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--text-sub); transition: 0.3s; font-weight: 500; }
-        nav li:hover { background: #f1f5f9; color: var(--primary); }
-        nav li.active { background: var(--primary); color: white; }
+        nav li { padding: 14px 18px; margin-bottom: 8px; border-radius: 14px; cursor: pointer; color: var(--text-sub); transition: all 0.3s ease; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        nav li:hover { background: #f1f5f9; color: var(--primary); transform: translateX(5px); }
+        nav li.active { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+
+        .backup-area { background: #f8fafc; padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border); margin-top: auto; }
+        .btn-backup { width: 100%; padding: 12px; margin-top: 10px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; cursor: pointer; font-size: 0.8rem; font-weight: 700; color: var(--text-main); transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .btn-backup:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* Main Content */
-        main { flex: 1; margin-left: 260px; padding: 2rem; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card); padding: 1.5rem; border-radius: 16px; border: 1px solid #e2e8f0; }
-        .stat-card span { font-size: 0.875rem; color: var(--text-sub); }
-        .stat-card h2 { font-size: 1.5rem; margin-top: 0.5rem; }
+        main { flex: 1; margin-left: 280px; padding: 3rem; max-width: 1400px; }
+        .header-top { margin-bottom: 3rem; }
+        .header-top h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
 
-        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
-        .glass-card { background: var(--card); padding: 1.5rem; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        /* Individual Donuts */
+        .individual-donuts-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .glass-card { background: white; padding: 2rem; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.03), 0 10px 10px -5px rgba(0,0,0,0.02); margin-bottom: 2.5rem; position: relative; }
+        .glass-card h3 { font-size: 0.8rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; text-align: center; }
 
-        /* Estilo dos Cartões Físicos */
-        .cc-visual { background: linear-gradient(135deg, #4f46e5, #9333ea); color: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1rem; position: relative; overflow: hidden; }
-        .cc-visual::after { content: ''; position: absolute; right: -20px; bottom: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+        .donut-val-center { position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; width: 100%; }
+        .donut-val-center .val { font-size: 1.1rem; font-weight: 800; display: block; color: var(--text-main); }
+        .donut-val-center .lab { font-size: 0.6rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
 
-        /* Formulários */
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); }
-        button { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
-        
+        /* History */
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-radius: 16px; margin-bottom: 0.5rem; transition: 0.2s; border: 1px solid transparent; }
+        .history-item:hover { background: #f8fafc; border-color: var(--border); }
+        .history-info .title { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+        .history-info .meta { font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; font-weight: 500; }
+        .tag-next { font-size: 10px; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 8px; font-weight: 800; margin-left: 10px; }
+        .history-amount { font-weight: 800; font-size: 1.1rem; color: var(--text-main); }
+
+        /* Forms */
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        label { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; margin-left: 5px; }
+        input, select { width: 100%; padding: 14px 18px; border: 1px solid var(--border); border-radius: 16px; background: #f8fafc; margin-bottom: 1.5rem; outline: none; font-size: 0.95rem; font-weight: 500; transition: 0.3s; }
+        input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08); }
+
+        .checkbox-group { display: flex; align-items: center; gap: 10px; padding: 10px 0 20px 5px; cursor: pointer; user-select: none; width: fit-content; }
+        .checkbox-group input { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: var(--primary); }
+        .checkbox-group span { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 18px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s; font-size: 1rem; margin-top: 10px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+
         .hidden { display: none; }
-        .btn-backup { background: #f1f5f9; color: var(--text-main); width: auto; padding: 8px 16px; font-size: 0.8rem; }
 
-        @media (max-width: 768px) {
-            aside { width: 70px; padding: 1rem; }
-            aside span { display: none; }
-            main { margin-left: 70px; }
-            .stats-grid, .content-grid { grid-template-columns: 1fr; }
+        @media (max-width: 1024px) {
+            aside { width: 90px; padding: 2rem 10px; text-align: center; }
+            .logo-area, .subtitle, nav li span, .backup-area { display: none; }
+            main { margin-left: 90px; padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
+<div id="pwa-install-banner">
+    <span style="font-weight: 700; font-size: 0.9rem;">Instalar Cartão de Crédito Fácil?</span>
+    <div style="display: flex; gap: 10px;">
+        <button onclick="installPWA()" style="background: white; color: var(--primary); border: none; padding: 8px 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 0.8rem;">Instalar</button>
+        <button onclick="hideInstallBanner()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px; border-radius: 12px; cursor: pointer; font-size: 0.8rem;">✕</button>
+    </div>
+</div>
+
 <aside>
-    <div class="logo">🏗️ <span>Gestão GF</span></div>
+    <div class="logo-area">
+        <span class="logo">CARTÃO DE<br>CRÉDITO FÁCIL</span>
+        <span class="subtitle">Gestão de Elite</span>
+    </div>
+
     <nav>
         <ul>
-            <li class="active" onclick="showSection('overview', this)">📊 <span>Geral</span></li>
-            <li onclick="showSection('cartoes', this)">💳 <span>Cartões</span></li>
-            <li onclick="showSection('compras', this)">🛍️ <span>Compras</span></li>
+            <li class="active" onclick="showSection('dash', this)">📊 <span>Dashboard</span></li>
+            <li onclick="showSection('cartoes', this)">💳 <span>Meus Cartões</span></li>
+            <li onclick="showSection('add', this)">✨ <span>Novo Gasto</span></li>
         </ul>
     </nav>
-    <button class="btn-backup" onclick="exportarDados()">💾 Backup</button>
+
+    <div class="backup-area">
+        <button class="btn-backup" onclick="exportarDados()">Fazer Backup</button>
+        <button class="btn-backup" onclick="document.getElementById('fileIn').click()">Importar Backup</button>
+        <input type="file" id="fileIn" class="hidden" onchange="importarDados(event)">
+    </div>
 </aside>
 
 <main>
     <div class="header-top">
-        <h1>Dashboard Financeiro</h1>
-        <div id="current-date" style="color: var(--text-sub)"></div>
+        <h1 id="page-title">Dashboard Geral</h1>
+        <p id="date-now" style="color: var(--text-sub); font-size: 0.95rem; margin-top: 8px; font-weight: 500;"></p>
     </div>
 
-    <section id="sec-overview">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span>Gasto Total (Mês)</span>
-                <h2 id="total-mes">R$ 0,00</h2>
-            </div>
-            <div class="stat-card">
-                <span>Limite Livre Total</span>
-                <h2 id="limite-livre" style="color: var(--accent)">R$ 0,00</h2>
-            </div>
-            <div class="stat-card">
-                <span>Próxima Fatura</span>
-                <h2 id="proxima-fatura">R$ 0,00</h2>
-            </div>
+    <section id="sec-dash">
+        <div class="individual-donuts-container" id="individual-donuts-box"></div>
+        <div class="glass-card">
+            <h3>Projeção Detalhada (12 Meses)</h3>
+            <div style="height: 420px;"><canvas id="chartProj"></canvas></div>
         </div>
-
-        <div class="content-grid">
-            <div class="glass-card">
-                <h3>Projeção de Gastos</h3>
-                <div style="height: 300px;"><canvas id="projChart"></canvas></div>
-            </div>
-            <div class="glass-card">
-                <h3>Meus Cartões</h3>
-                <div id="deck-cartoes"></div>
-            </div>
+        <div class="glass-card">
+            <h3>Últimas Movimentações</h3>
+            <div id="recent-history"></div>
         </div>
     </section>
 
     <section id="sec-cartoes" class="hidden">
-        <div class="content-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="form-row">
             <div class="glass-card">
-                <h3>Novo Cartão</h3>
-                <input type="text" id="c-nome" placeholder="Apelido do Cartão">
-                <input type="number" id="c-limite" placeholder="Limite Total">
-                <input type="number" id="c-venc" placeholder="Dia do Vencimento">
-                <input type="number" id="c-melhor" placeholder="Melhor Dia de Compra">
-                <button onclick="addCard()">Cadastrar Cartão</button>
+                <h3 id="card-form-title">Cadastrar Novo Cartão</h3>
+                <input type="hidden" id="c-id">
+                <label>NOME DO BANCO</label><input type="text" id="c-nome" placeholder="Ex: Nubank">
+                <label>LIMITE TOTAL (R$)</label><input type="number" id="c-limite" placeholder="5000.00">
+                <label>MELHOR DIA DE COMPRA</label><input type="number" id="c-melhor" placeholder="Ex: 25">
+                <button class="btn-primary" id="btn-save-card" onclick="addCard()">Salvar Cartão</button>
+                <button class="btn-backup hidden" id="btn-cancel-edit" onclick="resetCardForm()">Cancelar</button>
             </div>
             <div class="glass-card">
-                <h3>Dica do Engenheiro</h3>
-                <p style="color: var(--text-sub); font-size: 0.9rem;">Cadastre seus cartões com o limite real. O sistema calculará o comprometimento baseado nas parcelas futuras.</p>
+                <h3>Cartões Ativos</h3>
+                <div id="manager-list"></div>
             </div>
         </div>
     </section>
 
-    <section id="sec-compras" class="hidden">
-        <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-            <h3>Lançar Nova Despesa</h3>
-            <select id="l-cartao"></select>
-            <input type="text" id="l-desc" placeholder="O que você comprou?">
-            <input type="number" id="l-valor" placeholder="Valor Total">
-            <input type="date" id="l-data">
-            <input type="number" id="l-parc" placeholder="Quantidade de parcelas (1 para à vista)">
-            <select id="l-cat">
-                <option>Alimentação</option>
-                <option>Assinaturas</option>
-                <option>Lazer</option>
-                <option>Saúde</option>
-                <option>Transporte</option>
-                <option>Outros</option>
-            </select>
-            <button onclick="addCompra()">Confirmar Lançamento</button>
+    <section id="sec-add" class="hidden">
+        <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+            <h3>Registrar Despesa</h3>
+            <div class="form-row">
+                <div><label>CARTÃO</label><select id="l-cartao"></select></div>
+                <div><label>DATA</label><input type="date" id="l-data"></div>
+            </div>
+            <label>DESCRIÇÃO</label><input type="text" id="l-desc" placeholder="Ex: Mercado">
+            <div class="form-row">
+                <div><label>VALOR</label><input type="number" id="l-valor" placeholder="0.00"></div>
+                <div><label>PARCELAS</label><input type="number" id="l-parc" value="1"></div>
+            </div>
+            <label class="checkbox-group"><input type="checkbox" id="l-rec"><span>Despesa fixa recorrente</span></label>
+            <button class="btn-primary" onclick="addCompra()">Confirmar Lançamento</button>
         </div>
     </section>
 </main>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('gf_premium_db')) || { cartoes: [], compras: [] };
-    let chartObj = null;
+    Chart.register(ChartDataLabels);
+    let db = JSON.parse(localStorage.getItem('cc_facil_pro_v5')) || { cartoes: [], compras: [] };
+    let cP, donutCharts = [], deferredPrompt;
+    const colors = ['#6366f1', '#a855f7', '#10b981', '#f59e0b', '#f43f5e', '#3b82f6', '#0ea5e9'];
 
-    function save() {
-        localStorage.setItem('gf_premium_db', JSON.stringify(db));
-        updateUI();
+    // LÓGICA DE INSTALAÇÃO PWA
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('pwa-install-banner').style.display = 'flex';
+    });
+
+    async function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('App instalado');
+            }
+            deferredPrompt = null;
+            hideInstallBanner();
+        }
     }
+
+    function hideInstallBanner() {
+        document.getElementById('pwa-install-banner').style.display = 'none';
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    // SISTEMA CORE
+    function save() { localStorage.setItem('cc_facil_pro_v5', JSON.stringify(db)); updateUI(); }
 
     function showSection(id, el) {
         document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
         document.getElementById('sec-' + id).classList.remove('hidden');
         document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
         el.classList.add('active');
-        if(id === 'overview') initChart();
+        document.getElementById('page-title').innerText = el.innerText;
+        if(id === 'dash') renderCharts();
     }
 
     function addCard() {
-        const c = {
-            id: Date.now(),
-            nome: document.getElementById('c-nome').value,
-            limite: parseFloat(document.getElementById('c-limite').value),
-            venc: document.getElementById('c-venc').value,
-            melhor: document.getElementById('c-melhor').value
-        };
-        db.cartoes.push(c);
-        save();
-        alert('Cartão adicionado!');
+        const id = document.getElementById('c-id').value, nome = document.getElementById('c-nome').value, limite = parseFloat(document.getElementById('c-limite').value), melhor = parseInt(document.getElementById('c-melhor').value);
+        if(!nome || isNaN(limite)) return alert("Dados inválidos!");
+        if(id) {
+            const idx = db.cartoes.findIndex(c => c.id === id);
+            db.cartoes[idx] = { ...db.cartoes[idx], nome, limite, melhor };
+        } else {
+            db.cartoes.push({ id: Date.now().toString(), nome, limite, melhor });
+        }
+        resetCardForm(); save();
+    }
+
+    function editCard(id) {
+        const card = db.cartoes.find(c => c.id === id);
+        document.getElementById('c-id').value = card.id;
+        document.getElementById('c-nome').value = card.nome;
+        document.getElementById('c-limite').value = card.limite;
+        document.getElementById('c-melhor').value = card.melhor;
+        document.getElementById('card-form-title').innerText = "Editar Cartão";
+        document.getElementById('btn-save-card').innerText = "Atualizar";
+        document.getElementById('btn-cancel-edit').classList.remove('hidden');
+        showSection('cartoes', document.querySelector('nav li:nth-child(2)'));
+    }
+
+    function resetCardForm() {
+        document.getElementById('c-id').value = ""; document.getElementById('c-nome').value = "";
+        document.getElementById('c-limite').value = ""; document.getElementById('c-melhor').value = "";
+        document.getElementById('card-form-title').innerText = "Cadastrar Novo Cartão";
+        document.getElementById('btn-save-card').innerText = "Salvar Cartão";
+        document.getElementById('btn-cancel-edit').classList.add('hidden');
     }
 
     function addCompra() {
-        const valor = parseFloat(document.getElementById('l-valor').value);
-        const parc = parseInt(document.getElementById('l-parc').value) || 1;
-        const comp = {
-            id: Date.now(),
-            cartao: document.getElementById('l-cartao').value,
-            desc: document.getElementById('l-desc').value,
-            valor: valor,
-            parcelas: parc,
-            vParcela: valor / parc,
-            data: document.getElementById('l-data').value,
-            cat: document.getElementById('l-cat').value
-        };
-        db.compras.push(comp);
-        save();
-        alert('Lançamento realizado!');
+        const valor = parseFloat(document.getElementById('l-valor').value), cartao = document.getElementById('l-cartao').value, dataInput = document.getElementById('l-data').value;
+        if(!valor || !cartao || !dataInput) return alert("Preencha tudo!");
+        db.compras.push({
+            id: Date.now().toString(), cartao, desc: document.getElementById('l-desc').value || 'Sem descrição',
+            valor, parcelas: parseInt(document.getElementById('l-parc').value) || 1,
+            vParc: valor / (parseInt(document.getElementById('l-parc').value) || 1),
+            data: dataInput, recorrente: document.getElementById('l-rec').checked
+        });
+        save(); alert("Lançado!");
     }
 
     function updateUI() {
-        // Atualizar Select de Cartões
-        const sel = document.getElementById('l-cartao');
-        sel.innerHTML = db.cartoes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+        document.getElementById('l-cartao').innerHTML = db.cartoes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+        const hist = document.getElementById('recent-history'), recentes = [...db.compras].reverse().slice(0, 10);
+        hist.innerHTML = recentes.map(c => {
+            const card = db.cartoes.find(ca => ca.id === c.cartao), dC = new Date(c.data + 'T00:00:00'), proxima = dC.getDate() >= (card?.melhor || 1);
+            return `<div class="history-item">
+                        <div class="history-info"><span class="title">${c.desc} ${proxima ? '<span class="tag-next">PRÓX. FATURA</span>' : ''}</span><span class="meta">${dC.toLocaleDateString('pt-br')} • ${card?.nome || '---'}</span></div>
+                        <div style="display:flex; align-items:center; gap:20px;"><span class="history-amount">R$ ${c.valor.toLocaleString('pt-br', {minimumFractionDigits: 2})}</span><button onclick="delCompra('${c.id}')" style="background:none; border:none; color:var(--text-sub); cursor:pointer;">✖</button></div>
+                    </div>`;
+        }).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sub)">Sem lançamentos.</p>';
 
-        // Atualizar Deck de Cartões Visual
-        const deck = document.getElementById('deck-cartoes');
-        deck.innerHTML = db.cartoes.map(c => `
-            <div class="cc-visual">
-                <div style="font-size: 0.8rem; opacity: 0.8">Cartão</div>
-                <div style="font-size: 1.2rem; font-weight: 700">${c.nome}</div>
-                <div style="margin-top: 15px; font-size: 0.9rem">Limite: R$ ${c.limite.toFixed(2)}</div>
-            </div>
-        `).join('');
-
-        // Resumos rápidos
-        const totalGasto = db.compras.reduce((a, b) => a + b.valor, 0);
-        document.getElementById('total-mes').innerText = `R$ ${totalGasto.toLocaleString('pt-br')}`;
-        
-        const totalLimite = db.cartoes.reduce((a, b) => a + b.limite, 0);
-        document.getElementById('limite-livre').innerText = `R$ ${(totalLimite - totalGasto).toLocaleString('pt-br')}`;
-
-        initChart();
+        document.getElementById('manager-list').innerHTML = db.cartoes.map(c => `
+            <div class="history-item"><span style="font-weight:700">${c.nome}</span>
+                <div><button onclick="editCard('${c.id}')" style="color:var(--primary); background:none; border:none; font-weight:700; cursor:pointer; margin-right:15px;">Editar</button>
+                <button onclick="delCard('${c.id}')" style="color:var(--danger); background:none; border:none; font-weight:700; cursor:pointer;">Remover</button></div>
+            </div>`).join('');
+        renderCharts();
     }
 
-    function initChart() {
-        const ctx = document.getElementById('projChart').getContext('2d');
-        if(chartObj) chartObj.destroy();
+    function delCard(id) { if(confirm("Excluir cartão?")) { db.cartoes = db.cartoes.filter(c => c.id !== id); db.compras = db.compras.filter(c => c.cartao !== id); save(); } }
+    function delCompra(id) { db.compras = db.compras.filter(c => c.id !== id); save(); }
 
-        // Dados fictícios para o exemplo inicial, mas que já usam a estrutura real
-        chartObj = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
-                datasets: [{
-                    label: 'Projeção de Faturas',
-                    data: [1200, 1500, 800, 1900, 2200, 1100],
-                    borderColor: '#6366f1',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    function renderCharts() {
+        const donutBox = document.getElementById('individual-donuts-box');
+        donutBox.innerHTML = '';
+        donutCharts.forEach(c => c.destroy());
+        donutCharts = [];
+
+        db.cartoes.forEach((card) => {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'glass-card';
+            const utilizado = db.compras.filter(c => c.cartao === card.id).reduce((s, curr) => s + curr.valor, 0), disponivel = card.limite - utilizado, perc = ((utilizado * 100) / card.limite).toFixed(0);
+            cardDiv.innerHTML = `<h3>${card.nome}</h3><div style="height:200px; position:relative;"><canvas id="donut-${card.id}"></canvas><div class="donut-val-center"><span class="lab">Saldo Livre</span><span class="val">R$ ${Math.max(0, disponivel).toFixed(0)}</span></div></div>`;
+            donutBox.appendChild(cardDiv);
+
+            const ctx = document.getElementById(`donut-${card.id}`).getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { datasets: [{ data: [Math.max(0, disponivel), utilizado], backgroundColor: ['#10b981', '#f43f5e'], borderWidth: 0 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '82%',
+                    plugins: { legend: { display: false }, datalabels: { color: '#1e293b', font: { weight: '800', size: 10 }, padding: 6, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.85)', formatter: (val, ctx) => { let total = ctx.dataset.data[0] + ctx.dataset.data[1]; return ((val * 100) / total).toFixed(0) > 5 ? ((val * 100) / total).toFixed(0) + "%" : ""; } } }
+                }
+            });
+            donutCharts.push(chart);
         });
+
+        const hoje = new Date(), mesesNomes = [], mesesLabelsFull = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"], totaisPorMes = new Array(12).fill(0);
+        for (let i = 0; i < 12; i++) { let d = new Date(hoje.getFullYear(), hoje.getMonth() + i, 1); mesesNomes.push(mesesLabelsFull[d.getMonth()] + '/' + d.getFullYear().toString().slice(-2)); }
+
+        const datasetsP = db.cartoes.map((card, idx) => {
+            const pData = new Array(12).fill(0);
+            db.compras.filter(comp => comp.cartao === card.id).forEach(c => {
+                const dC = new Date(c.data + 'T00:00:00'), shift = dC.getDate() >= (card.melhor || 1) ? 1 : 0;
+                for(let p = 0; p < (c.recorrente ? 12 : c.parcelas); p++) {
+                    const dParcela = new Date(dC.getFullYear(), dC.getMonth() + p + shift, 1), diffMeses = (dParcela.getFullYear() - hoje.getFullYear()) * 12 + (dParcela.getMonth() - hoje.getMonth());
+                    if(diffMeses >= 0 && diffMeses < 12) { pData[diffMeses] += c.vParc; totaisPorMes[diffMeses] += c.vParc; }
+                }
+            });
+            return { label: card.nome, data: pData, backgroundColor: colors[idx % colors.length], datalabels: { color: '#fff', formatter: (v) => v > 0 ? v.toFixed(0) : '' } };
+        });
+
+        datasetsP.push({ label: 'Total', data: totaisPorMes.map(() => 0), datalabels: { color: '#1e293b', anchor: 'end', align: 'top', offset: 8, font: { weight: '800', size: 11 }, formatter: (val, ctx) => totaisPorMes[ctx.dataIndex] > 0 ? 'R$ ' + totaisPorMes[ctx.dataIndex].toFixed(0) : '' } });
+
+        if(cP) cP.destroy();
+        cP = new Chart(document.getElementById('chartProj'), { type: 'bar', data: { labels: mesesNomes, datasets: datasetsP }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, filter: (item) => item.text !== 'Total' } }, datalabels: { display: (ctx) => ctx.dataset.label === 'Total' || ctx.dataset.data[ctx.dataIndex] > 0 } }, scales: { x: { stacked: true, grid: { display: false }, border: { display: false } }, y: { stacked: true, display: false } } } });
     }
 
-    function exportarDados() {
-        const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'gestao_gf_backup.json';
-        a.click();
-    }
+    function exportarDados() { const blob = new Blob([JSON.stringify(db)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup_cc_facil.json'; a.click(); }
+    function importarDados(e) { const reader = new FileReader(); reader.onload = (ev) => { db = JSON.parse(ev.target.result); save(); alert("Dados importados!"); }; reader.readAsText(e.target.files[0]); }
 
-    document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-br', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    window.onload = updateUI;
+    window.onload = () => {
+        document.getElementById('date-now').innerText = new Date().toLocaleDateString('pt-br', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        updateUI();
+    };
 </script>
-
 </body>
 </html>
